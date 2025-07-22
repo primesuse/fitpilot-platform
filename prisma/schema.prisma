@@ -1,0 +1,343 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://prl.ly/d
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+model Client {
+  id                String   @id @default(cuid())
+  trainerId         String
+  name              String
+  email             String   @unique
+  passwordHash      String
+  heightCm          Float?
+  startingWeightKg  Float?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // NEW ENHANCED PROFILE FIELDS - Add these if missing
+  status            String   @default("invited")    // invited, registered, active
+  age               Int?                            // Client age
+  currentWeightKg   Float?                          // Current weight
+  bodyFatPercentage Float?                          // Body fat percentage
+  phoneNumber       String?                         // Contact phone - THIS FIXES THE ERROR
+  profilePictureUrl String?                         // Profile photo URL
+  
+  // Relations (keep existing)
+  trainer         PersonalTrainer @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  workoutPrograms WorkoutProgram[]
+  progressPhotos  ProgressPhoto[]
+  measurements    Measurement[]
+  checkIns        CheckIn[]
+  mealPlans       MealPlan[]
+  habits          Habit[]
+  achievements    Achievement[]
+  exerciseLogs    ExerciseLog[]
+
+  @@map("clients")
+}
+
+model PersonalTrainer {
+  id                    String   @id @default(uuid())
+  name                  String
+  email                 String   @unique
+  passwordHash          String
+  subscriptionTier      String   @default("Solo")
+  subscriptionStatus    String   @default("trial")
+  subscriptionExpiresAt DateTime?
+  stripeCustomerId      String?  @unique
+  
+  // ADD THESE TRIAL FIELDS
+  trialStartDate        DateTime @default(now())
+  trialDaysRemaining    Int      @default(7)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  // Enhanced profile fields (keep existing)
+  bio                   String?
+  specializations       String?
+  certifications        String?
+  phoneNumber           String?
+  profilePictureUrl     String?
+  businessName          String?
+  location              String?
+  yearsExperience       Int?
+
+  // Relations (keep existing)
+  clients               Client[]
+  exercises             Exercise[]
+  subscriptions         Subscription[]
+  payments              Payment[]
+  
+  @@map("personal_trainers")
+}
+
+model Exercise {
+  id          String   @id @default(cuid())
+  trainerId   String
+  name        String
+  videoUrl    String?
+  description String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  trainer          PersonalTrainer   @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  workoutExercises WorkoutExercise[]
+
+  @@map("exercises")
+}
+
+model WorkoutProgram {
+  id        String    @id @default(cuid())
+  clientId  String
+  name      String
+  startDate DateTime?
+  endDate   DateTime?
+  createdAt DateTime  @default(now())
+
+  // Relations
+  client      Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  workoutDays WorkoutDay[]
+
+  @@map("workout_programs")
+}
+
+model WorkoutDay {
+  id        String @id @default(cuid())
+  programId String
+  dayOfWeek Int // 0-6 for Sunday-Saturday
+  title     String?
+
+  // Relations
+  program          WorkoutProgram    @relation(fields: [programId], references: [id], onDelete: Cascade)
+  workoutExercises WorkoutExercise[]
+
+  @@map("workout_days")
+}
+
+model WorkoutExercise {
+  id             String  @id @default(cuid())
+  dayId          String
+  exerciseId     String
+  seqOrder       Int
+  sets           Int     @default(3)
+  reps           Int     @default(10)
+  dropSets       Int     @default(0)
+  superSetGroup  String?
+  tutSeconds     Int?
+  restSeconds    Int?
+  rir            Int?
+
+  // Relations
+  day          WorkoutDay    @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  exercise     Exercise      @relation(fields: [exerciseId], references: [id], onDelete: Restrict)
+  exerciseLogs ExerciseLog[]
+
+  @@map("workout_exercises")
+}
+
+model ExerciseLog {
+  id               String   @id @default(cuid())
+  workoutExerciseId String
+  clientId         String
+  performedAt      DateTime @default(now())
+  weightKg         Float
+  repsDone         Int
+
+  // Relations
+  workoutExercise WorkoutExercise @relation(fields: [workoutExerciseId], references: [id], onDelete: Cascade)
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("exercise_logs")
+}
+
+model ProgressPhoto {
+  id           String   @id @default(cuid())
+  clientId     String
+  capturedAt   DateTime
+  urlFront     String
+  urlSideLeft  String?
+  urlBack      String?
+  urlSideRight String?
+
+  // Relations
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("progress_photos")
+}
+
+model Measurement {
+  id              String   @id @default(cuid())
+  clientId        String
+  measuredAt      DateTime
+  bodyWeightKg    Float
+  bodyFatPercent  Float?
+  armCm           Float?
+  chestCm         Float?
+  waistCm         Float?
+  hipsCm          Float?
+  legsCm          Float?
+  skinfoldJson    String?  // JSON string
+
+  // Relations
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("measurements")
+}
+
+model CheckIn {
+  id                  String   @id @default(cuid())
+  clientId            String
+  submittedAt         DateTime @default(now())
+  questionnaireJson   String   // JSON string
+  ptResponseUrl       String?
+
+  // Relations
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("check_ins")
+}
+
+model MealPlan {
+  id        String @id @default(cuid())
+  clientId  String
+  name      String
+  totalCal  Int
+  proteinG  Int
+  carbsG    Int
+  fatG      Int
+
+  // Relations
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  meals  Meal[]
+
+  @@map("meal_plans")
+}
+
+model Meal {
+  id            String @id @default(cuid())
+  mealPlanId    String
+  name          String
+  foodItemsJson String // JSON string
+
+  // Relations
+  mealPlan MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+
+  @@map("meals")
+}
+
+model Habit {
+  id        String   @id @default(cuid())
+  clientId  String
+  title     String
+  createdAt DateTime @default(now())
+
+  // Relations
+  client    Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  habitLogs HabitLog[]
+
+  @@map("habits")
+}
+
+model HabitLog {
+  id         String   @id @default(cuid())
+  habitId    String
+  loggedDate DateTime
+  completed  Boolean  @default(false)
+
+  // Relations
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@map("habit_logs")
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  clientId    String
+  title       String
+  description String?
+  grantedAt   DateTime @default(now())
+
+  // Relations
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("achievements")
+}
+
+model AFCDFood {
+  id                String   @id @default(uuid())
+  publicFoodKey     String   @unique
+  classification    String?
+  foodName          String
+  energyKJ          Float    // Energy with dietary fibre (kJ)
+  energyKJNoDibre   Float    // Energy without dietary fibre (kJ)
+  moisture          Float    // Water content (g)
+  protein           Float    // Protein per 100g
+  fat               Float    // Total fat per 100g
+  carbohydrate      Float    // Available carbohydrate per 100g
+  fiber             Float?   // Total dietary fiber per 100g
+  ash               Float?   // Ash content per 100g
+  calcium           Float?   // Calcium (mg)
+  iron              Float?   // Iron (mg)
+  sodium            Float?   // Sodium (mg)
+  potassium         Float?   // Potassium (mg)
+  vitaminC          Float?   // Vitamin C (mg)
+  thiamin           Float?   // Thiamin (mg)
+  riboflavin        Float?   // Riboflavin (mg)
+  niacin            Float?   // Niacin (mg)
+  createdAt         DateTime @default(now())
+  
+  @@map("afcd_foods")
+}
+
+// NEW SUBSCRIPTION MODEL - Add this entire model
+model Subscription {
+  id                    String   @id @default(uuid())
+  trainerId             String
+  trainer               PersonalTrainer @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  
+  tier                  String   // "Solo", "Studio", "Enterprise"
+  status                String   // "active", "canceled", "past_due", "trialing"
+  currentPeriodStart    DateTime
+  currentPeriodEnd      DateTime
+  cancelAtPeriodEnd     Boolean  @default(false)
+  
+  // Stripe integration fields
+  stripeSubscriptionId  String?  @unique
+  stripeProductId       String?
+  stripePriceId         String?
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  @@map("subscriptions")
+}
+
+// NEW PAYMENT MODEL - Add this entire model  
+model Payment {
+  id                    String   @id @default(uuid())
+  trainerId             String
+  trainer               PersonalTrainer @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+  
+  amountCents           Int      // Amount in cents (e.g., $29.99 = 2999)
+  currency              String   @default("USD")
+  status                String   // "pending", "succeeded", "failed", "canceled"
+  
+  // Stripe integration
+  stripePaymentIntentId String?  @unique
+  stripeInvoiceId       String?  @unique
+  
+  description           String?  // What this payment was for
+  paidAt                DateTime @default(now())
+  createdAt             DateTime @default(now())
+  
+  @@map("payments")
+}

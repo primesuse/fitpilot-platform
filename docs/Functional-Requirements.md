@@ -1,5 +1,5 @@
 # Functional Requirements Specification
-## AI-Assisted Fitness Platform for Personal Trainers
+## AI-Assisted Fitness Platform for Personal Trainers (FitPilot)
 
 ### Executive Summary
 This document outlines the comprehensive functional requirements for an all-in-one fitness platform designed for Personal Trainers (PTs) and their clients. The platform combines AI-powered assistance, comprehensive workout and nutrition management, progress tracking, integrated payments, and business management tools into a single, cohesive web application.
@@ -14,14 +14,15 @@ This document outlines the comprehensive functional requirements for an all-in-o
 
 ### User Authentication and Profiles
 - **Secure Login System**
-  - Email/password authentication
+  - Email/password authentication with NextAuth.js ✅ COMPLETED
   - Social login options (Google, Facebook)
   - Password reset functionality
   - Two-factor authentication (optional)
 - **User Profiles**
   - Name, photo, bio, contact details
-  - Role-based access control (PT vs Client)
+  - Role-based access control (PT vs Client) ✅ COMPLETED
   - Privacy settings and data management
+  - **Client Extended Profile**: Age, height, weight, body fat percentage, phone number, profile picture
 
 ### AI Helper Widget
 - **Location**: Floating chat icon in bottom-right corner of every page
@@ -30,10 +31,6 @@ This document outlines the comprehensive functional requirements for an all-in-o
   - Pre-prompted for safe, non-medical advice
   - Suggests consulting PT for personalized guidance
   - Conversation logging for PT review (optional)
-- **Example Queries**:
-  - "How do I perform a squat properly?"
-  - "What's the best post-workout meal?"
-  - "How much protein should I eat daily?"
 
 ### Inbuilt Messaging System
 - **Real-time Chat**: One-on-one communication between client and PT
@@ -44,37 +41,36 @@ This document outlines the comprehensive functional requirements for an all-in-o
   - Message history and search
   - Push notifications for new messages
 - **Group Messaging**: PTs can send announcements to all clients
-- **Integration**: Email/SMS notifications for offline users
 
-### Integrated Payment System
+### Subscription and Payment System ⚠️ NEEDS IMPLEMENTATION
+- **PT Subscription Enforcement**: 
+  - PTs must have active subscription to access platform features
+  - Subscription tiers: Solo, Studio, Enterprise
+  - Payment gateway integration with Stripe
 - **Payment Processor**: Stripe integration for secure transactions
 - **Payment Flows**:
+  - **PT-to-Platform**: Subscription fees (primary)
   - **Client-to-PT**: Direct payment for sessions/packages
-  - **PT-to-Platform**: Subscription fees and commission payments
-- **Billing Models**:
-  - Per-session billing (e.g., $50 per session)
-  - Weekly packages (e.g., $200 per week)
-  - Monthly subscriptions
 - **Features**:
   - Automatic invoice generation
   - Payment history and receipts
   - Failed payment retry logic
-  - Tax calculation and reporting
+  - Subscription management and billing
 
-### Calendar and Scheduling System
-- **Shared Calendar Views**: Day, week, month views
-- **Availability Management**:
-  - PTs set availability slots
-  - Clients input their availability
-  - Automatic conflict detection
-- **Booking Process**:
-  - Clients browse PT's open sessions
-  - Request booking via application form
-  - PT approval/denial with notifications
-- **Integration**:
-  - Google Calendar sync
+### Calendar and Scheduling System ⚠️ NEEDS IMPLEMENTATION
+- **PT Calendar Dashboard**:
+  - View all booked sessions with client details
+  - Set availability slots and time blocks
+  - Session management and notes
+- **Client Booking System**:
+  - View PT's available time slots
+  - Request booking with preferred times
+  - PT approval/denial workflow
+- **Shared Features**:
+  - Day, week, month calendar views
   - Automated reminders (24hrs, 2hrs before)
   - Rescheduling and cancellation management
+  - Google Calendar sync integration
 
 ### Achievement System
 - **Standard Achievements**:
@@ -85,232 +81,146 @@ This document outlines the comprehensive functional requirements for an all-in-o
 - **Fun Achievements** (Gamification):
   - "You lifted 25 pandas this month!" (weight equivalents)
   - "You burned enough calories to power a small spaceship!"
-  - "Your reps could stack pancakes to the moon!"
-  - "You've walked the equivalent of crossing Australia!"
 - **Features**:
-  - Pop-up banner notifications
+  - Pop-up banner notifications ✅ COMPLETED
   - Achievement gallery and history
   - Social sharing capabilities
-  - Custom PT-defined achievements
-
-### Notification System
-- **Types**:
-  - Push notifications (web/mobile)
-  - Email notifications
-  - In-app notification center
-- **Triggers**:
-  - New messages
-  - Payment confirmations
-  - Session reminders
-  - Check-in due dates
-  - Achievement unlocks
-- **Customization**: Users can control notification preferences
 
 ## Personal Trainer Interface Requirements
 
-### PT Dashboard Overview
+### PT Dashboard Overview ✅ COMPLETED
 - **Client Management**:
-  - Searchable client list with photos and status indicators
+  - Searchable client list with photos and status indicators ✅ COMPLETED
   - Quick stats: last check-in, program compliance, payment status
   - Client progress summary cards
+  - **Client Status Tracking**: Invited, Registered, Active
 - **Business Metrics**:
   - Monthly revenue tracking
   - Client retention rates
   - Session completion rates
-  - Payment analytics
 - **Quick Actions**:
-  - "Invite New Client" button (sends email invitation)
-  - "View Calendar" shortcut
-  - "Manage Payments" access
+  - "Invite New Client" button ✅ COMPLETED
+  - "View Calendar" shortcut ⚠️ NEEDS IMPLEMENTATION
+  - "Remove Client" functionality ⚠️ NEEDS IMPLEMENTATION
 
-### Client Profile Management
-**Tabbed Interface for Each Client**:
+### Enhanced Client Profile Management ⚠️ PARTIALLY COMPLETED
+**Comprehensive Client Profile View**:
 
-#### Overview Tab
-- Client dashboard mirror view
-- Key stats and recent activity
-- Quick action buttons
+#### Overview Tab ⚠️ NEEDS ENHANCEMENT
+- **Client Stats Dashboard**:
+  - Current weight, BMI, body fat percentage
+  - Starting weight vs current weight comparison
+  - Next scheduled booking
+  - Recent activity summary
+  - Profile completion status
+- **Quick Actions**:
+  - Edit client profile
+  - View progress photos
+  - Assign new programs/meal plans
+  - Remove client (with confirmation)
 
-#### Workout Program Tab
-- **Program Builder Interface**:
+#### Workout Program Tab ✅ COMPLETED - NEEDS EDITING CAPABILITY
+- **Program Builder Interface**: ✅ COMPLETED
   - Drag-and-drop program creation
-  - Editable exercise rows (unlimited)
-  - Exercise parameters:
-    - Sets and reps
-    - Drop sets configuration
-    - Superset grouping
-    - Time under tension (TUT)
-    - Rest periods
-    - Reps in reserve (RIR)
-  - Client logging integration
-  - Auto-calculations for total load
-  - Session-to-session percentage comparisons
-- **AI Enhancement**:
-  - "Generate Program" button with AI suggestions
-  - Natural language program creation
-  - Template-based starting points
+  - Exercise parameters (sets, reps, rest periods)
+  - 7-day workout grid
+  - Save programs to database
+- **Program Management**: ⚠️ NEEDS IMPLEMENTATION
+  - View all client's existing programs
+  - Edit existing workout programs
+  - Program history and versioning
+  - Copy programs between clients
 
-#### Meal Plan Tab
-- **Food Database Integration**:
-  - Nutritionix API or similar for accurate calories/macros
-  - Search and add foods functionality
-  - Custom food entry for unique items
-- **Meal Planning Tools**:
-  - Daily meal builder (breakfast, lunch, dinner, snacks)
-  - Automatic calorie and macro totaling
-  - Recipe management and scaling
-- **AI Enhancement**:
-  - Meal plan generation based on client goals
-  - Dietary restriction accommodation
-  - Macro target optimization
+#### Meal Plan Tab ✅ PARTIALLY COMPLETED - NEEDS EDITING CAPABILITY
+- **Food Database Integration**: ✅ COMPLETED
+  - USDA food database search
+  - Accurate calories/macros calculation
+  - Meal plan creation interface
+- **Meal Plan Management**: ⚠️ NEEDS IMPLEMENTATION
+  - View all client's existing meal plans
+  - Edit existing meal plans
+  - Meal plan history and templates
+  - Copy meal plans between clients
 
-#### Progress & Check-ins Tab
-- **Photo Management**:
-  - Week-by-week photo comparison tool
-  - Upload guidelines and examples for clients
-  - Progress photo timeline view
+#### Progress & Check-ins Tab ⚠️ NEEDS IMPLEMENTATION
+- **Progress Photo Management**:
+  - View client's progress photos (front, side, back)
+  - Week-by-week comparison tool
+  - Side-by-side progress comparison (Week 1 vs Week 10)
+  - Photo timeline and progress tracking
 - **Check-in Management**:
   - Review weekly questionnaire responses
-  - Browser-based video response recording
   - Check-in history and trends
 - **Measurement Tracking**:
-  - 9-site skinfold measurement input
-  - Body tape measurements (arms, chest, waist, hips, legs)
-  - Automatic body fat percentage calculation
-  - Week-to-week comparison charts
+  - Body measurements and skinfold data
+  - Weight tracking charts
+  - Body fat percentage calculations
 
-### Content Management
-- **Exercise Library**:
+### Content Management ✅ PARTIALLY COMPLETED
+- **Exercise Library**: ✅ COMPLETED
   - Personal exercise video collection
   - Upload, edit, and delete exercises
-  - Video hosting integration (YouTube/Vimeo)
-  - Exercise categorization and tagging
+  - Exercise CRUD operations with video URLs
 - **Program Templates**:
-  - Save workout programs as reusable templates
-  - Quick assignment to new clients
-  - Template sharing (future feature)
-- **Educational Content**:
-  - Informational video library
-  - Supplement guides and recommendations
-  - Client-specific content assignment
+  - Save workout programs as reusable templates ✅ COMPLETED
+  - Quick assignment to multiple clients ⚠️ NEEDS IMPLEMENTATION
 
-### Business Management Tools
-- **Payment Management**:
-  - Set client-specific rates
-  - Track earnings and deductions
-  - Generate financial reports
-  - Stripe dashboard integration
-- **Analytics Dashboard**:
-  - Client retention metrics
-  - Revenue trends and forecasting
-  - Session completion rates
-  - Client engagement analytics
-- **Lead Management**:
-  - Prospect tracking CRM
-  - Conversion funnel analysis
-  - Follow-up reminders
-- **Automated Workflows**:
-  - Client onboarding sequences
-  - Welcome message automation
-  - Progress milestone celebrations
-- **Referral System**:
-  - Referral link generation
-  - Discount code creation
-  - Referral tracking and rewards
+### Business Management Tools ⚠️ NEEDS IMPLEMENTATION
+- **Client Removal System**:
+  - Remove client functionality with data retention options
+  - Transfer client to another PT
+  - Export client data before removal
+- **Subscription Management**:
+  - View current subscription status
+  - Upgrade/downgrade subscription tiers
+  - Payment history and invoicing
 
 ## Client Interface Requirements
 
-### Client Dashboard
+### Client Dashboard ✅ COMPLETED
 - **Personal Stats Display**:
-  - Current weight and starting weight
-  - BMR (auto-calculated from weight, height, age, gender)
-  - Body fat percentage
+  - Current weight and progress metrics
+  - BMR calculation
   - Target daily calories
-- **Daily Focus Cards**:
-  - "Today's Workout" with start button
-  - "Today's Meal Plan" summary
-  - "Habits to Complete" checklist
-- **Progress Highlights**:
-  - Recent achievements showcase
-  - Weekly progress summary
-  - Upcoming milestones
-- **Onboarding Integration**:
-  - Embedded welcome video from PT
-  - Getting started checklist
+- **Extended Profile Management**: ⚠️ NEEDS IMPLEMENTATION
+  - Age, height, weight, body fat percentage
+  - Phone number and contact details
+  - Profile picture upload and management
 
-### Workout Experience
-- **Program Overview**:
-  - Weekly workout schedule view
-  - Exercise library access with PT's videos
-  - Progress tracking charts
-- **Live Workout Interface**:
-  - Step-by-step exercise guidance
-  - Set-by-set logging with weight and reps
-  - Rest timer with audio alerts
-  - Exercise video pop-ups for form reference
-  - Total load calculation and session comparison
-  - Achievement notifications for new PRs
-
-### Progress Tracking
-- **Weekly Check-in System**:
-  - Automated Monday reminders
-  - PT's custom questionnaire form
-  - Progress photo upload (front, side, back views)
-  - Photo-taking guidance with examples
-  - PT video response viewing
-- **Photo Comparison Tool**:
-  - Week X vs Week Y selection
-  - Side-by-side progress comparison
+### Progress Tracking System ⚠️ NEEDS IMPLEMENTATION
+- **Progress Photo System**:
+  - Upload progress photos (front, side, back views)
+  - Photo comparison tool (Week X vs Week Y)
   - Timeline slider for historical view
-- **Measurement Logging**:
-  - 9-site skinfold input fields
-  - Body tape measurements
-  - Automatic body fat calculation
-  - Progress charts and trends
-- **Achievement Gallery**:
-  - All earned achievements display
-  - Fun achievement explanations
-  - Social sharing options
+  - Photo-taking guidance and examples
+- **Self-Comparison Features**:
+  - Side-by-side week comparison
+  - Progress timeline visualization
+  - Achievement milestones based on photos
 
-### Nutrition and Habit Management
-- **Meal Plan Display**:
-  - Daily and weekly meal overviews
-  - Calorie and macro targets
-  - Food substitution suggestions
+### Booking and Calendar Features ⚠️ NEEDS IMPLEMENTATION
+- **Session Booking System**:
+  - View PT's available time slots
+  - Request booking with preferred times
+  - Booking confirmation and reminders
+- **Calendar Integration**:
+  - Personal calendar view
+  - Upcoming sessions display
+  - Rescheduling capabilities
+
+### Workout Experience ✅ COMPLETED
+- **Program Viewing**: Can view assigned workout programs
+- **Live Workout Interface**: ⚠️ NEEDS IMPLEMENTATION
+  - Step-by-step exercise guidance
+  - Set-by-set logging functionality
+  - Progress tracking and PR notifications
+
+### Nutrition Management ✅ PARTIALLY COMPLETED
+- **Meal Plan Display**: Basic meal plan viewing capability
+- **Enhanced Features**: ⚠️ NEEDS IMPLEMENTATION
+  - Daily meal tracking
   - Grocery list generation
-- **Habit Tracking**:
-  - Daily habit checkboxes
-  - Streak tracking and celebrations
-  - Habit completion statistics
-  - Custom habit creation (PT-approved)
-
-### PT Interaction Hub
-- **Communication Center**:
-  - Direct messaging with PT
-  - Message history and search
-  - File sharing capabilities
-- **Session Management**:
-  - PT availability viewing
-  - Session booking requests
-  - Session history and notes
-- **Resource Library**:
-  - PT's educational videos
-  - Supplement recommendations
-  - Form guides and tutorials
-
-### Additional Client Features
-- **Social and Community** (Optional):
-  - Client leaderboards (PT-enabled)
-  - Achievement sharing
-  - Community challenges
-- **Offline Capability**:
-  - Cached workout viewing
-  - Offline progress logging
-  - Sync when connection restored
-- **Personalization**:
-  - Theme and color customization
-  - Notification preferences
-  - Language selection
+  - Macro target monitoring
 
 ## Technical Requirements
 
@@ -319,25 +229,41 @@ This document outlines the comprehensive functional requirements for an all-in-o
 - **Uptime**: 99.9% availability target
 - **Scalability**: Support for 10,000+ concurrent users
 
-### Security
+### Security ✅ PARTIALLY COMPLETED
 - **Data Encryption**: All data encrypted in transit and at rest
-- **Authentication**: Secure password hashing (bcrypt)
-- **Payment Security**: PCI DSS compliance through Stripe
-- **Data Privacy**: GDPR and CCPA compliance
-- **Access Control**: Role-based permissions
+- **Authentication**: Secure password hashing with bcrypt ✅ COMPLETED
+- **Role-based Access Control**: PT vs Client permissions ✅ COMPLETED
+- **Subscription Access Control**: ⚠️ NEEDS IMPLEMENTATION
 
 ### Integration Requirements
-- **Payment Processing**: Stripe API integration
-- **AI Services**: OpenAI GPT API
-- **Food Database**: Nutritionix or similar API
-- **File Storage**: AWS S3 or similar cloud storage
-- **Email Services**: SendGrid or similar for notifications
-- **Calendar Sync**: Google Calendar API
+- **Payment Processing**: Stripe API integration ⚠️ NEEDS IMPLEMENTATION
+- **AI Services**: OpenAI GPT API (planned)
+- **Food Database**: USDA food database ✅ COMPLETED
+- **File Storage**: AWS S3 for progress photos ⚠️ NEEDS IMPLEMENTATION
+- **Calendar Sync**: Google Calendar API ⚠️ NEEDS IMPLEMENTATION
 
-### Mobile Responsiveness
-- **Design**: Mobile-first responsive design
-- **Performance**: Optimized for mobile networks
-- **Touch Interface**: Touch-friendly UI elements
-- **Offline Support**: Basic functionality without internet
+## Development Status Summary
 
-This comprehensive specification serves as the foundation for developing a complete fitness platform that addresses the needs of both personal trainers and their clients while maintaining scalability and user engagement through innovative features and AI integration.
+### ✅ COMPLETED FEATURES
+- Basic authentication system (PT/Client roles)
+- PT Dashboard with client list
+- Client invitation system
+- Exercise Library with CRUD operations
+- Workout Program Builder (drag-and-drop)
+- Meal Plan Builder with USDA food search
+- Basic client dashboard
+- Database schema implementation
+
+### ⚠️ IN PROGRESS
+- Meal plan saving functionality
+- Program editing capabilities
+
+### 🔲 NEEDS IMPLEMENTATION
+- Subscription payment system
+- Calendar and booking system
+- Progress photo upload and comparison
+- Client removal functionality
+- Enhanced client profiles
+- Program/meal plan editing for existing items
+- Session booking workflow
+- Achievement system backend
